@@ -1,17 +1,23 @@
 import mongoose from 'mongoose';
 // Connect to the database
-mongoose.connect('mongodb+srv://316:316Password@lbt.5zbr4zu.mongodb.net/?retryWrites=true&w=majority&appName=LBT', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+mongoose.connect(process.env.MONGODB_URI!, { useNewUrlParser: true, useUnifiedTopology: true });
+
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
 });
+
+mongoose.connection.on('error', (err) => {
+  console.error('Error connecting to MongoDB:', err);
+});
+
 // Define the schema for the data
-const helloSchema = new mongoose.Schema({
- language: String,
- greeting: String
-});
+const testSchema = new mongoose.Schema({
+ name: String,
+ age: Number
+}, { collection: 'people' });
 // Create a model. This is what provides the nice API to
 // manipulate the database.
-const HelloModel = mongoose.model ('messages', helloSchema);
-
-// Export the HelloModel directly using ESM syntax
-export default HelloModel;
+const testModel = mongoose.model ('people', testSchema);
+// Make the model and schema available
+export default testModel;
