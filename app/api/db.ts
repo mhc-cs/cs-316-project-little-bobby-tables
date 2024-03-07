@@ -12,6 +12,6 @@ const helloSchema = new mongoose.Schema({
 // Create a model. This is what provides the nice API to
 // manipulate the database.
 const HelloModel = mongoose.model ('messages', helloSchema);
-// Make the model and schema available
-module.exports = HelloModel;
-export { HelloModel };
+
+// Export the HelloModel directly using ESM syntax
+export default HelloModel;
