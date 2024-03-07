@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 // Connect to the database
-mongoose.connect(process.env.MONGODB_URI!);
+mongoose.connect('mongodb+srv://316:316Password@lbt.5zbr4zu.mongodb.net/?retryWrites=true&w=majority&appName=LBT', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 // Define the schema for the data
 const helloSchema = new mongoose.Schema({
  language: String,
