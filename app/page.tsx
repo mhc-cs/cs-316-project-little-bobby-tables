@@ -394,7 +394,7 @@ function NewEventScreen() {
 			<button>Submit</button>
 		</div>
 	);
-
+	}
 // Avoid caching, so that hot updates work as expected
 export const dynamic = 'force-dynamic'
 // Get the language data from the database.
