@@ -184,6 +184,11 @@ function NameBubbleNoedit({name}) {
 */
 function ParticipantsBox({participants}) {
 	// Turns an array of strings into a displayable group of NameBubbles
+	const [isAddingParticipants, setIsAddingParticipants] = useState(false);
+	let addButton = <AddNameBubble onButtonClick={() => setIsAddingParticipants(true)}/>;
+	let selectionBox = <ParticipantSelection pool={participantsArray} onButtonClick={() => setIsAddingParticipants(false)}/>;
+
+
 	const participantBubbles = participants.map((element, i) =>
 	<NameBubble key={i} name={element}></NameBubble> 
 	)
@@ -193,7 +198,11 @@ return (
 	<div className="users-box">
 		<h3 style={{padding:"10px"}}>Participants</h3>
 		{participantBubbles}
-		<AddNameBubble/>
+		
+		<div>
+		{isAddingParticipants ?  selectionBox : addButton}
+		</div>
+
 	</div>
 	
 	
