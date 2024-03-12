@@ -1,4 +1,8 @@
+'use client';
+
 import './style.css';
+
+import {useState} from 'react';
 
 
 var participantsArray = ["Joe", "Dave", "Carlos", "John"];
@@ -63,7 +67,7 @@ function ItinerarySummaryBlock({tripTitle, startDate, endDate}) {
 		<div className="itinerary-box">
 			<h2 style={{display: "inline-block", marginRight:"30px"}}>{tripTitle}</h2>
 				<NameBubbleNoedit name={"User1"}></NameBubbleNoedit>
-				<AddNameBubble/>
+				<AddNameBubble onButtonClick={null}/> {/** TODO: Pass the function for when you click on the Add User button*/}
 			<p>{startDate} to {endDate}</p>
 			
 			<button className="button" >View Itinerary</button>
@@ -174,18 +178,6 @@ function NameBubbleNoedit({name}) {
 	);
 }
 
-/**
- * Creates a bubble with a little plus, implying that the user can click on it to add
- * a new user. 
- */
-function AddNameBubble() {
-	return (
-		<button className="name-bubble-interactive">
-			<p style={{display: "inline-block"}}>+</p>
-		</button>
-	);
-}
-
 /*
 	Creates the side box on the Itinerary screen that shows all participants and allows you to add new
 	ones to the itinerary. 
@@ -222,6 +214,74 @@ function NamesToBubbles({participants}) {
 	);
 }
 
+/*
+
+Manages and displays the participants for a particular event.
+Controls the addition of new participants, the deletion of old participants.
+TODO: Currently displayed participants should probably be a state.
+
+*/
+function EventParticipantsManager({eventParticipants}) {
+	const [isAddingParticipants, setIsAddingParticipants] = useState(false);
+	let addButton = <AddNameBubble onButtonClick={() => setIsAddingParticipants(true)}/>;
+	let selectionBox = <ParticipantSelection pool={participantsArray} onButtonClick={() => setIsAddingParticipants(false)}/>;
+
+	
+	// isActive={activeIndex === 0}
+	// onButtonClick={() => setIsAddingParticipants(true)}
+
+	// {cond ? <A /> : <B />}
+
+	return (
+		<span>
+			<NamesToBubbles participants={eventParticipants}/> 
+			{isAddingParticipants ?  selectionBox : addButton}
+		</span>
+
+	);
+
+}
+
+/**
+ * Creates a bubble with a little plus, implying that the user can click on it to add
+ * a new participant. 
+ */
+function AddNameBubble({onButtonClick}) {
+	return (
+		<button className="name-bubble-interactive" onClick={onButtonClick}>
+			<p style={{display: "inline-block"}}>+</p>
+		</button>
+	);
+}
+
+
+/*
+	Renders a selection box containing all participants in the unselected pool, 
+	as well as an OK button to add a selected participant to the pool for that event.
+*/
+function ParticipantSelection({pool, onButtonClick}) {
+	// Maps the pool of unselected users to selection boxes.
+	const selectionValues = pool.map(
+		(element, i) =>
+		<option  className="name-bubble-not-interactive" key={i} value={element}>{element}</option> 
+	)
+	return (
+		<div style={{display: "inline-block"}}>
+
+			<select>
+				<option value="none"></option>
+				{selectionValues}
+			</select>
+
+			<button className="name-bubble-interactive" onClick={onButtonClick}>
+				<p style={{display: "inline-block"}}>OK</p>
+			</button>
+			
+		</div>
+	)
+}
+
+
 
 /*
 	Displays a single event, containing salient information and a link to the rest of the data. 
@@ -233,8 +293,10 @@ function TripEvent({eventName, eventDate, eventTime, eventText, eventParticipant
 		<div className="itinerary-box">
 
 				<h2 style={{display: "inline-block", marginRight:"30px"}}>{eventName}</h2>
-				<NamesToBubbles users={eventUsers}/> 
-				<AddNameBubble/>
+				
+				{/** Displays the participants, and allows the client to manage users */}
+				<EventParticipantsManager eventParticipants={eventParticipants}/>
+
 				<p>Starts on {eventDate} at {eventTime}</p>
 				<p><i>{eventText}</i></p>
 				{/** Opens the link to the reservation, in a new tab */}
@@ -265,7 +327,7 @@ function SearchScreen() {
 				{/** Filters TBD */}
 				<NameBubble name="Placeholder for filter1"/>
 				<NameBubble name="Placeholder for filter2"/>
-				<AddNameBubble/>
+				<AddNameBubble onButtonClick={null}/>
 				<hr/>
 			</div>
 
@@ -332,7 +394,6 @@ function NewEventScreen() {
 			<button>Submit</button>
 		</div>
 	);
-}
 
 // Avoid caching, so that hot updates work as expected
 export const dynamic = 'force-dynamic'
