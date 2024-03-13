@@ -327,8 +327,8 @@ export const dynamic = 'force-dynamic'
 async function getData() {
     try {
         const res = await fetch(
-			'http://cs-vm-02.cs.mtholyoke.edu:31600/api'
-			//'http://localhost:31600/api'
+			//'http://cs-vm-02.cs.mtholyoke.edu:31600/api'
+			'http://localhost:31600/api'
 			);
         console.log('Frontend Fetch: Response status:', res.status);
         const data = await res.json();

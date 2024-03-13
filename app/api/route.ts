@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { NextResponse } from 'next/server';
 import testModel from './db';
-import HelloModel from './helloModel';
+import userModel from './userModel';
 
 
 // Gets all language data from the DB
@@ -15,12 +15,12 @@ export async function GET(request: Request) {
     // Log the result to the console for debugging
     console.log('API Route: After query, result:', testData);
 
-    const helloData = await HelloModel.find({});
-    console.log('Data from messages collection:', helloData);
+    const userData = await userModel.find({});
+    console.log('Data from Users collection:', userData);
 
     const combinedData = {
         testData,
-        helloData
+        userData
     };
     // Return the result as JSON
     return NextResponse.json(combinedData || []);
