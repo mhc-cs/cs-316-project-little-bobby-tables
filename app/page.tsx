@@ -1,7 +1,11 @@
+'use client';
+
 import './style.css';
 
+import {useState} from 'react';
 
-var usersArray = ["Joe", "Dave", "Carlos"];
+
+var participantsArray = ["Joe", "Dave", "Carlos", "John"];
 
 
 export default function Page() {
@@ -14,8 +18,9 @@ export default function Page() {
 
 }
 
-
-
+/* --------
+HOME SCREEN
+----------- */
 
 /*
 	Shows all itineraries.
@@ -62,7 +67,7 @@ function ItinerarySummaryBlock({tripTitle, startDate, endDate}) {
 		<div className="itinerary-box">
 			<h2 style={{display: "inline-block", marginRight:"30px"}}>{tripTitle}</h2>
 				<NameBubbleNoedit name={"User1"}></NameBubbleNoedit>
-				<AddNameBubble/>
+				<AddNameBubble onButtonClick={null}/> {/** TODO: Pass the function for when you click on the Add User button*/}
 			<p>{startDate} to {endDate}</p>
 			
 			<button className="button" >View Itinerary</button>
@@ -72,10 +77,13 @@ function ItinerarySummaryBlock({tripTitle, startDate, endDate}) {
 }
 
 
+/* ------------
+ITINERARY FOCUS
+--------------- */
 
 /*
 	Shows detail about a single itinerary, allowing the user to add events and manage
-	users. 
+	participants. 
 
 */
 function ItineraryScreen({itineraryName}) {
@@ -89,7 +97,7 @@ function ItineraryScreen({itineraryName}) {
 					<h1>{itineraryName}</h1>
 				</div>
 
-				<UsersBox users={usersArray} />
+				<ParticipantsBox participants={participantsArray} />
 				
 			</div>
 
@@ -97,36 +105,36 @@ function ItineraryScreen({itineraryName}) {
 
 			<div className="body-scroll" style={{width:"65%"}}> 
 
-				<ItineraryEvent
+				<TripEvent
 					eventName = {"Debby's flight"}
 					eventDate = {"March 8th"}
 					eventTime = {"15:35"}
 					eventText = {"Flight number 1234567891234, seat 23C, landing approx 9pm (George will pickup)"}
-					eventUsers = {["Debby"]}
+					eventParticipants = {["Debby"]}
 					eventLink = {"https://bobby-tables.com/"}
 				/>
-				<ItineraryEvent
+				<TripEvent
 					eventName = {"Mark's flight"}
 					eventDate = {"March 8th"}
 					eventTime = {"18:35"}
 					eventText = {"Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)"}
-					eventUsers = {["Mark"]}
+					eventParticipants = {["Mark"]}
 					eventLink = {"https://bobby-tables.com/"}
 				/>
-				<ItineraryEvent
+				<TripEvent
 					eventName = {"event 3"}
 					eventDate = {"March 8th"}
 					eventTime = {"18:35"}
 					eventText = {"Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)"}
-					eventUsers = {["Mark"]}
+					eventParticipants = {["Mark"]}
 					eventLink = {"https://bobby-tables.com/"}
 				/>
-				<ItineraryEvent
+				<TripEvent
 					eventName = {"event 3"}
 					eventDate = {"March 8th"}
 					eventTime = {"18:35"}
 					eventText = {"Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)Flight number 13257451234, seat 23C, landing approx 9pm (George will pickup)"}
-					eventUsers = {["Mark"]}
+					eventParticipants = {["Mark"]}
 					eventLink = {"https://bobby-tables.com/"}
 				/>
 
@@ -170,25 +178,18 @@ function NameBubbleNoedit({name}) {
 	);
 }
 
-/**
- * Creates a bubble with a little plus, implying that the user can click on it to add
- * a new user. 
- */
-function AddNameBubble() {
-	return (
-		<button className="name-bubble-interactive">
-			<p style={{display: "inline-block"}}>+</p>
-		</button>
-	);
-}
-
 /*
-	Creates the side box on the Itinerary screen that shows all users and allows you to add new
+	Creates the side box on the Itinerary screen that shows all participants and allows you to add new
 	ones to the itinerary. 
 */
-function UsersBox({users}) {
+function ParticipantsBox({participants}) {
 	// Turns an array of strings into a displayable group of NameBubbles
-	const userBubbles = users.map((element, i) =>
+	const [isAddingParticipants, setIsAddingParticipants] = useState(false);
+	let addButton = <AddNameBubble onButtonClick={() => setIsAddingParticipants(true)}/>;
+	let selectionBox = <ParticipantSelection pool={participantsArray} onButtonClick={() => setIsAddingParticipants(false)}/>;
+
+
+	const participantBubbles = participants.map((element, i) =>
 	<NameBubble key={i} name={element}></NameBubble> 
 	)
 
@@ -196,8 +197,12 @@ function UsersBox({users}) {
 return (
 	<div className="users-box">
 		<h3 style={{padding:"10px"}}>Participants</h3>
-		{userBubbles}
-		<AddNameBubble/>
+		{participantBubbles}
+		
+		<div>
+		{isAddingParticipants ?  selectionBox : addButton}
+		</div>
+
 	</div>
 	
 	
@@ -210,27 +215,100 @@ return (
 	Creates a simpler array of name bubbles (with X'es), ideal for attaching to an
 	event or itinerary to indicate who's already there. 
 */
-function NamesToBubbles({users}) {
-	// potential: using style = {{background-color: SOMETHING}} to give each user a unique color
+function NamesToBubbles({participants}) {
+	// potential: using style = {{background-color: SOMETHING}} to give each participant a unique color
 	return (
-		users.map((element, i) =>
+		participants.map((element, i) =>
 		<NameBubble key={i} name={element}></NameBubble> )
+	);
+}
+
+/*
+
+Manages and displays the participants for a particular event.
+Controls the addition of new participants, the deletion of old participants.
+TODO: Currently displayed participants should probably be a state.
+
+*/
+function EventParticipantsManager({eventParticipants}) {
+	const [isAddingParticipants, setIsAddingParticipants] = useState(false);
+	let addButton = <AddNameBubble onButtonClick={() => setIsAddingParticipants(true)}/>;
+	let selectionBox = <ParticipantSelection pool={participantsArray} onButtonClick={() => setIsAddingParticipants(false)}/>;
+
+	
+	// isActive={activeIndex === 0}
+	// onButtonClick={() => setIsAddingParticipants(true)}
+
+	// {cond ? <A /> : <B />}
+
+	return (
+		<span>
+			<NamesToBubbles participants={eventParticipants}/> 
+			{isAddingParticipants ?  selectionBox : addButton}
+		</span>
+
+	);
+
+}
+
+/**
+ * Creates a bubble with a little plus, implying that the user can click on it to add
+ * a new participant. 
+ */
+function AddNameBubble({onButtonClick}) {
+	return (
+		<button className="name-bubble-interactive" onClick={onButtonClick}>
+			<p style={{display: "inline-block"}}>+</p>
+		</button>
 	);
 }
 
 
 /*
-	Displays a single event, containing salient information and a link to the rest of the data. 
+	Renders a selection box containing all participants in the unselected pool, 
+	as well as an OK button to add a selected participant to the pool for that event.
 */
-function ItineraryEvent({eventName, eventDate, eventTime, eventText, eventUsers, eventLink}) {
+function ParticipantSelection({pool, onButtonClick}) {
+	// Maps the pool of unselected users to selection boxes.
+	const selectionValues = pool.map(
+		(element, i) =>
+		<option  className="name-bubble-not-interactive" key={i} value={element}>{element}</option> 
+	)
+	return (
+		<div style={{display: "inline-block"}}>
+
+			<select>
+				<option value="none"></option>
+				{selectionValues}
+			</select>
+
+			<button className="name-bubble-interactive" onClick={onButtonClick}>
+				<p style={{display: "inline-block"}}>OK</p>
+			</button>
+			
+		</div>
+	)
+}
+
+
+
+/*
+	Displays a single event, containing salient information and a link to the rest of the data. 
+	The client can also manage participants. 
+*/
+function TripEvent({eventName, eventDate, eventTime, eventText, eventParticipants, eventLink}) {
+
 	return (
 		<div className="itinerary-box">
 
 				<h2 style={{display: "inline-block", marginRight:"30px"}}>{eventName}</h2>
-				<NamesToBubbles users={eventUsers}/> 
-				<AddNameBubble/>
+				
+				{/** Displays the participants, and allows the client to manage users */}
+				<EventParticipantsManager eventParticipants={eventParticipants}/>
+
 				<p>Starts on {eventDate} at {eventTime}</p>
 				<p><i>{eventText}</i></p>
+				{/** Opens the link to the reservation, in a new tab */}
 				<p><a href={eventLink} target="_blank">Manage reservation on external website</a></p>
 
 		</div>
@@ -248,15 +326,17 @@ function SearchScreen() {
 				<h1>Search results</h1>
 				<input style={{display:"inline-block", width:"90%", margin:"25px"}}></input>
 				<p style={{display:"inline-block", marginRight:"10px"}}>Searching for: </p>
+				{/** Allow user to select desired event type */}
 				<select style={{width:"50%"}}>
 					<option value="accomodation">Hotel or other accomodation</option>
 					<option value="travel">Plane, train, or automobile</option>
 					<option value="event">Other event</option>
 				</select>
 				<p>Filters: </p>
+				{/** Filters TBD */}
 				<NameBubble name="Placeholder for filter1"/>
 				<NameBubble name="Placeholder for filter2"/>
-				<AddNameBubble/>
+				<AddNameBubble onButtonClick={null}/>
 				<hr/>
 			</div>
 
@@ -276,6 +356,9 @@ function SearchScreen() {
 	);
 }
 
+/*
+	Shows a single search result.
+*/
 function SearchResult({title, cost, site, filters}) {
 	return (
 
@@ -316,10 +399,11 @@ function NewEventScreen() {
 			<input></input>
 			<p>Other notes (optional):</p>
 			<textarea></textarea>
+
+			<button>Submit</button>
 		</div>
 	);
-}
-
+	}
 // Avoid caching, so that hot updates work as expected
 export const dynamic = 'force-dynamic'
 // Get the language data from the database.
