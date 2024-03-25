@@ -4,6 +4,8 @@ import '../../style.css';
 
 import {useState} from 'react';
 
+import {useRouter} from 'next/navigation';
+
 
 var participantsArray = ["Joe", "Dave", "Carlos", "John"];
 
@@ -22,6 +24,7 @@ export default function Page() {
 	// New event screen
 
 function NewEventScreen() {
+	const router = useRouter();
 	return (
 
 		<div>
@@ -47,7 +50,9 @@ function NewEventScreen() {
 			<p>Other notes (optional):</p>
 			<textarea></textarea>
 
-			<button>Submit</button>
+			<button
+				onClick={() => router.push("/itinerary")}
+				>Submit</button>
 		</div>
 	);
 	}

@@ -4,6 +4,7 @@ import '../style.css';
 
 import {use, useState} from 'react';
 
+import {useRouter} from 'next/navigation';
 
 var participantsArray = ["Joe", "Dave", "Carlos", "John"];
 
@@ -29,6 +30,7 @@ ITINERARY FOCUS
 
 */
 function ItineraryScreen({itineraryName}) {
+	const router = useRouter();
 	return (
 		<div>
 			<div>
@@ -90,6 +92,7 @@ function ItineraryScreen({itineraryName}) {
 			{/** the footer, containing a button to add new, and a background to make it a little more visible */}
 			<div style={{position:"fixed", bottom:"0px", width:"100%", height:"150px", backgroundColor:"#111111aa"}}>
 				<button className="new-event-button"
+					onClick={() => router.push("/itinerary/new-event")}
 					>Add new event</button>
 			</div>
 

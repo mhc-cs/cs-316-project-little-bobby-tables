@@ -4,6 +4,7 @@
 import '../style.css';
 
 import {useState} from 'react';
+import {useRouter} from 'next/navigation';
 
 
 export default function Page() {
@@ -61,6 +62,7 @@ function HomeScreen() {
 	itinerary to the user on the home page.
 */
 function ItinerarySummaryBlock({tripTitle, startDate, endDate}) {
+	const router = useRouter();
 	return (
 		<div className="itinerary-box">
 			<h2 style={{display: "inline-block", marginRight:"30px"}}>{tripTitle}</h2>
@@ -69,6 +71,7 @@ function ItinerarySummaryBlock({tripTitle, startDate, endDate}) {
 			<p>{startDate} to {endDate}</p>
 			
 			<button className="button" 
+				onClick={() => router.push("/itinerary")}
 				>View Itinerary</button>
 
 		</div>
